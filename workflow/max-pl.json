@@ -1,0 +1,127 @@
+{
+  "code": "from pyspark.sql import SparkSession\nfrom pyspark.sql.types import *\nimport random\nfrom datetime import datetime, date, timedelta\n\nspark = SparkSession.builder.getOrCreate()\n\n\n# -----------------------------\n# Configuration\n# -----------------------------\nnum_records = 100000\n\nfirst_names = [\n    \"Amit\", \"Priya\", \"Rahul\", \"Sneha\", \"Vikram\",\n    \"Neha\", \"Arjun\", \"Kavita\", \"Rohan\", \"Meera\"\n]\n\nlast_names = [\n    \"Sharma\", \"Patel\", \"Verma\", \"Joshi\", \"Singh\",\n    \"Kumar\", \"Nair\", \"Desai\", \"Gupta\", \"Shah\"\n]\n\ndepartments = [\n    \"IT\", \"HR\", \"Finance\", \"Marketing\",\n    \"Sales\", \"Operations\", \"Support\"\n]\n\njob_titles = [\n    \"Software Engineer\",\n    \"QA Engineer\",\n    \"Project Manager\",\n    \"Data Analyst\",\n    \"HR Executive\",\n    \"Sales Executive\",\n    \"Support Engineer\"\n]\n\ncities = [\n    (\"Pune\", \"Maharashtra\", \"411001\"),\n    (\"Mumbai\", \"Maharashtra\", \"400001\"),\n    (\"Bengaluru\", \"Karnataka\", \"560001\"),\n    (\"Hyderabad\", \"Telangana\", \"500001\"),\n    (\"Delhi\", \"Delhi\", \"110001\"),\n    (\"Chennai\", \"Tamil Nadu\", \"600001\"),\n    (\"Kochi\", \"Kerala\", \"682001\")\n]\n\n# -----------------------------\n# Generate data\n# -----------------------------\ndata = []\n\nfor i in range(1, num_records + 1):\n\n    first_name = random.choice(first_names)\n    last_name = random.choice(last_names)\n\n    city, state, postal_code = random.choice(cities)\n\n    dob = date(\n        random.randint(1975, 2000),\n        random.randint(1, 12),\n        random.randint(1, 28)\n    )\n\n    hire_date = date(\n        random.randint(2015, 2025),\n        random.randint(1, 12),\n        random.randint(1, 28)\n    )\n\n    created_at = datetime.now()\n\n    row = (\n        i,                                      # 1 EmployeeID\n        first_name,                             # 2 FirstName\n        last_name,                              # 3 LastName\n        f\"{first_name.lower()}.{last_name.lower()}{i}@example.com\",  # 4 Email\n        f\"9{random.randint(100000000, 999999999)}\",                  # 5 Phone\n        dob,                                    # 6 DateOfBirth\n        random.choice([\"Male\", \"Female\"]),      # 7 Gender\n        random.choice(departments),             # 8 Department\n        random.choice(job_titles),              # 9 JobTitle\n        round(random.uniform(40000, 150000), 2), # 10 Salary\n        hire_date,                              # 11 HireDate\n        city,                                   # 12 City\n        state,                                  # 13 State\n        \"India\",                                # 14 Country\n        postal_code,                            # 15 PostalCode\n        random.choice(first_names) + \" \" +\n        random.choice(last_names),              # 16 ManagerName\n        random.choice([\"Full-Time\", \"Part-Time\", \"Contract\"]), # 17 EmploymentType\n        random.choice([\"Active\", \"Inactive\"]),  # 18 Status\n        round(random.uniform(2.5, 5.0), 1),     # 19 PerformanceRating\n        created_at                              # 20 CreatedAt\n    )\n\n    data.append(row)\n\n# -----------------------------\n# Schema - 20 columns\n# -----------------------------\nschema = StructType([\n    StructField(\"EmployeeID\", IntegerType(), False),\n    StructField(\"FirstName\", StringType(), True),\n    StructField(\"LastName\", StringType(), True),\n    StructField(\"Email\", StringType(), True),\n    StructField(\"Phone\", StringType(), True),\n    StructField(\"DateOfBirth\", DateType(), True),\n    StructField(\"Gender\", StringType(), True),\n    StructField(\"Department\", StringType(), True),\n    StructField(\"JobTitle\", StringType(), True),\n    StructField(\"Salary\", DoubleType(), True),\n    StructField(\"HireDate\", DateType(), True),\n    StructField(\"City\", StringType(), True),\n    StructField(\"State\", StringType(), True),\n    StructField(\"Country\", StringType(), True),\n    StructField(\"PostalCode\", StringType(), True),\n    StructField(\"ManagerName\", StringType(), True),\n    StructField(\"EmploymentType\", StringType(), True),\n    StructField(\"Status\", StringType(), True),\n    StructField(\"PerformanceRating\", DoubleType(), True),\n    StructField(\"CreatedAt\", TimestampType(), True)\n])\n\n# -----------------------------\n# Create DataFrame\n# -----------------------------\ndf = spark.createDataFrame(data, schema)\n\n# -----------------------------\n# Create Temporary View\n# -----------------------------\ndf.createOrReplaceTempView(\"employee\")\n\n\ndf=spark.sql(\"select *,1 as id from employee\")\ndf.createOrReplaceTempView(\"employee_clean\")\n\nimport time\nspark.sql(\"select * from employee_clean\").show(100)\ntime.sleep(10)\n\nfrom pyspark.sql import SparkSession\nfrom pyspark.sql.types import *\nimport random\nfrom datetime import datetime, date, timedelta\n\nspark = SparkSession.builder.getOrCreate()\n\n\n# -----------------------------\n# Configuration\n# -----------------------------\nnum_records = 600000\n\nfirst_names = [\n    \"Amit\", \"Priya\", \"Rahul\", \"Sneha\", \"Vikram\",\n    \"Neha\", \"Arjun\", \"Kavita\", \"Rohan\", \"Meera\"\n]\n\nlast_names = [\n    \"Sharma\", \"Patel\", \"Verma\", \"Joshi\", \"Singh\",\n    \"Kumar\", \"Nair\", \"Desai\", \"Gupta\", \"Shah\"\n]\n\ndepartments = [\n    \"IT\", \"HR\", \"Finance\", \"Marketing\",\n    \"Sales\", \"Operations\", \"Support\"\n]\n\njob_titles = [\n    \"Software Engineer\",\n    \"QA Engineer\",\n    \"Project Manager\",\n    \"Data Analyst\",\n    \"HR Executive\",\n    \"Sales Executive\",\n    \"Support Engineer\"\n]\n\ncities = [\n    (\"Pune\", \"Maharashtra\", \"411001\"),\n    (\"Mumbai\", \"Maharashtra\", \"400001\"),\n    (\"Bengaluru\", \"Karnataka\", \"560001\"),\n    (\"Hyderabad\", \"Telangana\", \"500001\"),\n    (\"Delhi\", \"Delhi\", \"110001\"),\n    (\"Chennai\", \"Tamil Nadu\", \"600001\"),\n    (\"Kochi\", \"Kerala\", \"682001\")\n]\n\n# -----------------------------\n# Generate data\n# -----------------------------\ndata = []\n\nfor i in range(1, num_records + 1):\n\n    first_name = random.choice(first_names)\n    last_name = random.choice(last_names)\n\n    city, state, postal_code = random.choice(cities)\n\n    dob = date(\n        random.randint(1975, 2000),\n        random.randint(1, 12),\n        random.randint(1, 28)\n    )\n\n    hire_date = date(\n        random.randint(2015, 2025),\n        random.randint(1, 12),\n        random.randint(1, 28)\n    )\n\n    created_at = datetime.now()\n\n    row = (\n        i,                                      # 1 EmployeeID\n        first_name,                             # 2 FirstName\n        last_name,                              # 3 LastName\n        f\"{first_name.lower()}.{last_name.lower()}{i}@example.com\",  # 4 Email\n        f\"9{random.randint(100000000, 999999999)}\",                  # 5 Phone\n        dob,                                    # 6 DateOfBirth\n        random.choice([\"Male\", \"Female\"]),      # 7 Gender\n        random.choice(departments),             # 8 Department\n        random.choice(job_titles),              # 9 JobTitle\n        round(random.uniform(40000, 150000), 2), # 10 Salary\n        hire_date,                              # 11 HireDate\n        city,                                   # 12 City\n        state,                                  # 13 State\n        \"India\",                                # 14 Country\n        postal_code,                            # 15 PostalCode\n        random.choice(first_names) + \" \" +\n        random.choice(last_names),              # 16 ManagerName\n        random.choice([\"Full-Time\", \"Part-Time\", \"Contract\"]), # 17 EmploymentType\n        random.choice([\"Active\", \"Inactive\"]),  # 18 Status\n        round(random.uniform(2.5, 5.0), 1),     # 19 PerformanceRating\n        created_at                              # 20 CreatedAt\n    )\n\n    data.append(row)\n\n# -----------------------------\n# Schema - 20 columns\n# -----------------------------\nschema = StructType([\n    StructField(\"EmployeeID\", IntegerType(), False),\n    StructField(\"FirstName\", StringType(), True),\n    StructField(\"LastName\", StringType(), True),\n    StructField(\"Email\", StringType(), True),\n    StructField(\"Phone\", StringType(), True),\n    StructField(\"DateOfBirth\", DateType(), True),\n    StructField(\"Gender\", StringType(), True),\n    StructField(\"Department\", StringType(), True),\n    StructField(\"JobTitle\", StringType(), True),\n    StructField(\"Salary\", DoubleType(), True),\n    StructField(\"HireDate\", DateType(), True),\n    StructField(\"City\", StringType(), True),\n    StructField(\"State\", StringType(), True),\n    StructField(\"Country\", StringType(), True),\n    StructField(\"PostalCode\", StringType(), True),\n    StructField(\"ManagerName\", StringType(), True),\n    StructField(\"EmploymentType\", StringType(), True),\n    StructField(\"Status\", StringType(), True),\n    StructField(\"PerformanceRating\", DoubleType(), True),\n    StructField(\"CreatedAt\", TimestampType(), True)\n])\n\n# -----------------------------\n# Create DataFrame\n# -----------------------------\ndf = spark.createDataFrame(data, schema)\n\n# -----------------------------\n# Create Temporary View\n# -----------------------------\ndf.createOrReplaceTempView(\"employee\")\n\n\nspark.sql(\"select * from employee\").show(truncate=False)",
+  "creator": "You",
+  "description": "",
+  "git_branch": "main",
+  "git_folder_id": "test-py",
+  "health": {},
+  "id": "max-pl",
+  "language": "python",
+  "name": "max-pl",
+  "owner": "You",
+  "parameters": [],
+  "run_as": "You",
+  "run_log_ref": 13,
+  "tags": [],
+  "tasks": [
+    {
+      "canvas_position": {
+        "x": 120,
+        "y": 150
+      },
+      "cluster_id": "min-max",
+      "depends_on": [],
+      "id": "abc42789-a706-4324-ae26-74b476dff8b3",
+      "libraries": [],
+      "metric_thresholds": {},
+      "name": "Python script",
+      "notebook_id": "",
+      "notifications": [],
+      "parameters": [],
+      "path": "raw · Notebooks / Data_ingestion_flow / cleans",
+      "retries": 0,
+      "script_id": "94b05796-289b-44dd-9b25-8df710a335a5",
+      "source": "from pyspark.sql import SparkSession\nfrom pyspark.sql.types import *\nimport random\nfrom datetime import datetime, date, timedelta\n\nspark = SparkSession.builder.getOrCreate()\n\n\n# -----------------------------\n# Configuration\n# -----------------------------\nnum_records = 100000\n\nfirst_names = [\n    \"Amit\", \"Priya\", \"Rahul\", \"Sneha\", \"Vikram\",\n    \"Neha\", \"Arjun\", \"Kavita\", \"Rohan\", \"Meera\"\n]\n\nlast_names = [\n    \"Sharma\", \"Patel\", \"Verma\", \"Joshi\", \"Singh\",\n    \"Kumar\", \"Nair\", \"Desai\", \"Gupta\", \"Shah\"\n]\n\ndepartments = [\n    \"IT\", \"HR\", \"Finance\", \"Marketing\",\n    \"Sales\", \"Operations\", \"Support\"\n]\n\njob_titles = [\n    \"Software Engineer\",\n    \"QA Engineer\",\n    \"Project Manager\",\n    \"Data Analyst\",\n    \"HR Executive\",\n    \"Sales Executive\",\n    \"Support Engineer\"\n]\n\ncities = [\n    (\"Pune\", \"Maharashtra\", \"411001\"),\n    (\"Mumbai\", \"Maharashtra\", \"400001\"),\n    (\"Bengaluru\", \"Karnataka\", \"560001\"),\n    (\"Hyderabad\", \"Telangana\", \"500001\"),\n    (\"Delhi\", \"Delhi\", \"110001\"),\n    (\"Chennai\", \"Tamil Nadu\", \"600001\"),\n    (\"Kochi\", \"Kerala\", \"682001\")\n]\n\n# -----------------------------\n# Generate data\n# -----------------------------\ndata = []\n\nfor i in range(1, num_records + 1):\n\n    first_name = random.choice(first_names)\n    last_name = random.choice(last_names)\n\n    city, state, postal_code = random.choice(cities)\n\n    dob = date(\n        random.randint(1975, 2000),\n        random.randint(1, 12),\n        random.randint(1, 28)\n    )\n\n    hire_date = date(\n        random.randint(2015, 2025),\n        random.randint(1, 12),\n        random.randint(1, 28)\n    )\n\n    created_at = datetime.now()\n\n    row = (\n        i,                                      # 1 EmployeeID\n        first_name,                             # 2 FirstName\n        last_name,                              # 3 LastName\n        f\"{first_name.lower()}.{last_name.lower()}{i}@example.com\",  # 4 Email\n        f\"9{random.randint(100000000, 999999999)}\",                  # 5 Phone\n        dob,                                    # 6 DateOfBirth\n        random.choice([\"Male\", \"Female\"]),      # 7 Gender\n        random.choice(departments),             # 8 Department\n        random.choice(job_titles),              # 9 JobTitle\n        round(random.uniform(40000, 150000), 2), # 10 Salary\n        hire_date,                              # 11 HireDate\n        city,                                   # 12 City\n        state,                                  # 13 State\n        \"India\",                                # 14 Country\n        postal_code,                            # 15 PostalCode\n        random.choice(first_names) + \" \" +\n        random.choice(last_names),              # 16 ManagerName\n        random.choice([\"Full-Time\", \"Part-Time\", \"Contract\"]), # 17 EmploymentType\n        random.choice([\"Active\", \"Inactive\"]),  # 18 Status\n        round(random.uniform(2.5, 5.0), 1),     # 19 PerformanceRating\n        created_at                              # 20 CreatedAt\n    )\n\n    data.append(row)\n\n# -----------------------------\n# Schema - 20 columns\n# -----------------------------\nschema = StructType([\n    StructField(\"EmployeeID\", IntegerType(), False),\n    StructField(\"FirstName\", StringType(), True),\n    StructField(\"LastName\", StringType(), True),\n    StructField(\"Email\", StringType(), True),\n    StructField(\"Phone\", StringType(), True),\n    StructField(\"DateOfBirth\", DateType(), True),\n    StructField(\"Gender\", StringType(), True),\n    StructField(\"Department\", StringType(), True),\n    StructField(\"JobTitle\", StringType(), True),\n    StructField(\"Salary\", DoubleType(), True),\n    StructField(\"HireDate\", DateType(), True),\n    StructField(\"City\", StringType(), True),\n    StructField(\"State\", StringType(), True),\n    StructField(\"Country\", StringType(), True),\n    StructField(\"PostalCode\", StringType(), True),\n    StructField(\"ManagerName\", StringType(), True),\n    StructField(\"EmploymentType\", StringType(), True),\n    StructField(\"Status\", StringType(), True),\n    StructField(\"PerformanceRating\", DoubleType(), True),\n    StructField(\"CreatedAt\", TimestampType(), True)\n])\n\n# -----------------------------\n# Create DataFrame\n# -----------------------------\ndf = spark.createDataFrame(data, schema)\n\n# -----------------------------\n# Create Temporary View\n# -----------------------------\ndf.createOrReplaceTempView(\"employee\")\n",
+      "source_kind": "Workspace",
+      "type": "python"
+    },
+    {
+      "canvas_position": {
+        "x": 468.6995708154506,
+        "y": 62
+      },
+      "cluster_id": "min-max",
+      "depends_on": [
+        {
+          "outcome": "success",
+          "task_id": "abc42789-a706-4324-ae26-74b476dff8b3"
+        }
+      ],
+      "id": "24fa2ad0-ab08-4905-9cbc-08f7fedb6704",
+      "libraries": [],
+      "metric_thresholds": {},
+      "name": "Python script",
+      "notebook_id": "",
+      "notifications": [],
+      "parameters": [],
+      "path": "clean · Notebooks / Data_ingestion_flow / cleans",
+      "retries": 0,
+      "script_id": "5b48f868-53d3-45b9-b52c-97a46dcd6158",
+      "source": "df=spark.sql(\"select *,1 as id from employee\")\ndf.createOrReplaceTempView(\"employee_clean\")",
+      "source_kind": "Workspace",
+      "type": "python"
+    },
+    {
+      "canvas_position": {
+        "x": 793.3004291845493,
+        "y": 88
+      },
+      "cluster_id": "min-max",
+      "depends_on": [
+        {
+          "outcome": "success",
+          "task_id": "24fa2ad0-ab08-4905-9cbc-08f7fedb6704"
+        }
+      ],
+      "id": "39c813e8-af0e-46cf-afcc-fe766fb76f2f",
+      "libraries": [],
+      "metric_thresholds": {},
+      "name": "Python script",
+      "notebook_id": "",
+      "notifications": [],
+      "parameters": [],
+      "path": "gold · Notebooks / Data_ingestion_flow / cleans",
+      "retries": 0,
+      "script_id": "93a70001-39bc-4e29-b460-5150cae39268",
+      "source": "import time\nspark.sql(\"select * from employee_clean\").show(100)\ntime.sleep(10)",
+      "source_kind": "Workspace",
+      "type": "python"
+    },
+    {
+      "canvas_position": {
+        "x": 577,
+        "y": 214
+      },
+      "cluster_id": "test-with-ankur",
+      "depends_on": [
+        {
+          "outcome": "success",
+          "task_id": "39c813e8-af0e-46cf-afcc-fe766fb76f2f"
+        }
+      ],
+      "id": "0550e8df-cfa2-4f41-9f6c-0eb8d1c71148",
+      "libraries": [],
+      "metric_thresholds": {},
+      "name": "Notebook",
+      "notebook_id": "96b2081b-ca3e-4ac3-9ff2-e97fcd7fe5d6",
+      "notifications": [],
+      "parameters": [],
+      "path": "notebooks/0001_demo_notebook.ipynb",
+      "retries": 0,
+      "source": "",
+      "source_kind": "Workspace",
+      "type": "notebook"
+    }
+  ],
+  "trigger": {
+    "frequency": "minutely",
+    "last_scheduled_at": "2026-10-10T10:24:01.220515+00:00",
+    "next_run_at": "2026-10-10T10:25:00+00:00",
+    "paused": true,
+    "start_time": "00:00",
+    "timezone": "UTC",
+    "type": "scheduled"
+  },
+  "updated_at": "2026-10-13T11:58:42.487696+00:00",
+  "workflow_type": "job"
+}
